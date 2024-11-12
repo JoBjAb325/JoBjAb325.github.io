@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมเส้นทางประวัติศาสตร์</title>
+    <style>
+        /* ตั้งค่าพื้นฐาน */
+        body {
+            font-family: 'Georgia', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f3f0e6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #8b4513;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        #map-container {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            background-image: url('map.jpg'); /* ใส่ภาพแผนที่ */
+            background-size: cover;
+            border: 4px solid #8b4513;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .location {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #8b0000;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .location:hover {
+            transform: scale(1.2);
+            background-color: #ff6347;
+        }
+
+        #info-box {
+            margin-top: 20px;
+            width: 90%;
+            max-width: 600px;
+            padding: 20px;
+            border: 2px solid #8b4513;
+            border-radius: 8px;
+            background-color: #fdf6e3;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none;
+            color: #4a4a4a;
+        }
+
+        .section {
+            margin-top: 15px;
+        }
+
+        .section h3 {
+            color: #8b4513;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            text-decoration: underline;
+        }
+
+        /* ข้อความภายใน info-box */
+        p {
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        /* ปุ่มปิดกล่องข้อมูล */
+        #close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #8b4513;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+            font-size: 0.9em;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #close-btn:hover {
+            background-color: #a0522d;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>เกมเส้นทางประวัติศาสตร์</h1>
+    <a href="https://sites.google.com/view/computertechnology2-1/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">ใบความรู้</a>
+    <p>คลิกจุดบนแผนที่เพื่อเรียนรู้</p>
+
+    <div id="map-container">
+        <!-- จุดต่าง ๆ บนแผนที่ -->
+        <div class="location" id="location1" style="top: 74px; left: 391px;" onclick="showInfo('location1')"></div>
+        <div class="location" id="location3" style="top: 135px; left: 391px;" onclick="showInfo('location3')"></div>
+        <div class="location" id="location4" style="top: 66px; left: 280px;" onclick="showInfo('location4')"></div>
+        <div class="location" id="location5" style="top: 165px; left: 188px;" onclick="showInfo('location5')"></div>
+    </div>
+
+    <div id="info-box">
+        <button id="close-btn" onclick="closeInfo()">ปิด</button>
+        <h2 id="location-title"></h2>
+        <div class="section">
+            <h3>ความเป็นมา</h3>
+            <p id="location-history"></p>
+        </div>
+        <div class="section">
+            <h3>ความเชื่อถือของหลักฐาน</h3>
+            <p id="location-credibility"></p>
+        </div>
+        <div class="section">
+            <h3>การประเมินคุณค่าของหลักฐาน</h3>
+            <p id="location-evaluation"></p>
+        </div>
+        <div class="section">
+            <h3>เกมส์</h3>
+            <a id="location-link" href="#" target="_blank">เกมส์แผนที่</a>
+        </div>
+    </div>  
+    <br>
+    <a href="https://sites.google.com/view/ommmemigaire/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">สรุป</a></br>
+    <script>
+        // ข้อมูลของสถานที่ต่าง ๆ บนแผนที่
+        const locations = {
+            location1: {
+                title: "จุดที่ 1 - สะพานไม้เคี่ยม",
+                history: "ตั้งอยู่ในโครงการตามพระราชดำริหนองใหญ่ตามพระราชดำริเป็นสะพานทอดยาวกว่า300เมตรเชื่อมต่อกับเกาะขนาดเล็กตัวสะพานมีลักษณะเว้าโค้งดูแปลกตากลางบึงขนาดใหญ่ซึ่งเป็นพื้นที่แก้มลิงของโครงการสะพานไม้สร้างมาจากไม้เคี่ยมไม้เนื้อแข็งที่มีมากในภาคใต้มีคุณสมบัติแข็งแกร่งทนทั้งน้ำจืดน้ำเค็มจึงเป็นที่มาของชื่อสะพานไม้เคี่ยมตั้งอยู่ในโครงการตามพระราชดำริหนองใหญ่ตามพระราชดำริเป็นสะพานทอดยาวกว่า300เมตรเชื่อมต่อกับเกาะขนาดเล็ก",
+                credibility: "สะพานไม้เคี่ยมเริ่มสร้างในปี พ.ศ. 2554 เพื่อเป็นส่วนหนึ่งของโครงการพัฒนาพื้นที่แก้มลิงตามแนวพระราชดำริของในหลวงรัชกาลที่ 9 ",
+                evaluation: "พื้นที่นี้มีทัศนียภาพที่สวยงามโดยเฉพาะในช่วงเช้าและเย็นพร้อมทั้งมีสัตว์เลี้ยงประจำอย่างนากที่เป็นที่รู้จักของนักท่องเที่ยวทำให้สะพานแห่งนี้เป็นจุดถ่ายภาพยอดนิยมและเหมาะสำหรับการพักผ่อนท่ามกลางธรรมชาติ​",
+                link: "https://wordwall.net/play/81764/990/763"
+            },
+            location3: {
+                title: "จุดที่ 2 - โครงการพัฒนาพื้นที่หนองใหญ่ตามพระราชดำริ",
+                history: "แนวพระราชดำริของพระบาทสมเด็จพระเจ้าอยู่หัวที่เกี่ยวข้องกับการสร้างเส้นทางเดินน้ำในพื้นที่หนองใหญ่มีจุดประสงค์เพื่อป้องกันน้ำท่วมใหญ่ที่เคยเกิดขึ้นในชุมพรโดยการพักน้ำไว้ในแก้มลิงหลังจากนั้นชาวชุมพรได้ร่วมมือกันสานต่อแนวพระราชดำริดังกล่าวด้วยการจัดตั้งศูนย์ความรู้โครงการหนองใหญ่เพื่อส่งเสริมการใช้ชีวิตอย่างพอเพียงและเรียบง่าย",
+                credibility: "มีบันทึกพระราชดำริและรายงานการดำเนินงานอย่างชัดเจน ชาวชุมพรมีส่วนร่วมในการพัฒนาและสร้างศูนย์ความรู้",
+                evaluation: "โครงการนี้มีพื้นฐานมาจากแนวพระราชดำริที่ทรงให้ความสำคัญกับการจัดการน้ำและการช่วยเหลือชุมชนในช่วงที่เกิดภัยพิบัติถือเป็นหลักฐานสำคัญของพระมหากรุณาธิคุณและความเอื้ออาทรของพระบาทสมเด็จพระเจ้าอยู่หัวในด้านการพัฒนาชุมชน",
+                link: "https://wordwall.net/play/81766/166/556"
+            },
+            location4: {
+                title: "จุดที่ 3 - สะพานชมกวาง",
+                history: "ทางจังหวัดเล็งเห็นความสำคัญจึงได้มีการสนับสนุนจัดตั้งที่บริเวณที่ดังกล่าวให้เป็นศูนย์เรียนรู้ตามศาสตร์พระราชาทางจังหวัดจึงได้มอบทุนจำนวนนึงเพื่อพัฒนาเป็นแหล่งท่องเที่ยวเชิงอนุรักษ์สร้างสะพานไม้เคี่ยมและพัฒนาเป็นที่เลี้ยงกวางโดยขอรับกวางจากศูนย์วิจัยและบำรุงพันธุ์สัตว์หนองกวางจ.ราชบุรีได้มอบพันธุ์กวางรูซี10ตัวเป็นตัวเมีย6ตัวและตัวผู้4ตัวนำมาปล่อยขยายพันธุ์จนปัจจุบันมีมากกว่า30ตัวแล้วและปัจจุบันได้สร้างสะพานไม้ขนาดใหญ่เพื่อส่งเสริมการท่องเที่ยวและพัฒนาเป็นแหล่งท่องเที่ยวเชิงอนุรักษ์เรียกว่าสะพานชมกวาง",
+                credibility: " เอกสารประวัติศาสตร์หนังสือเกี่ยวกับโบราณสถานหรือบทความจากนักวิจัยที่มีชื่อเสียงพิจารณาการศึกษาและการวิจัยที่มีอยู่เกี่ยวกับสะพานชมกวางโดยเฉพาะอย่างยิ่งงานวิจัยที่ได้รับการตรวจสอบและตีพิมพ์ในวารสารวิชาการ",
+                evaluation: "สะพานชมกวางอาจมีบทบาทสำคัญในเหตุการณ์ทางประวัติศาสตร์หรือเป็นจุดเชื่อมโยงที่สำคัญระหว่างชุมชนสถานที่หรือกิจกรรมที่เกิดขึ้นในอดีตการศึกษาประวัติของสะพานจะช่วยเข้าใจถึงบทบาทของมันในบริบทของประวัติศาสตร์ท้องถิ่น",
+                link: "https://wordwall.net/play/81766/793/470"
+            },
+            location5: {
+                title: "จุดที่ 4 - ตลาดน้ำหนองใหญ่",
+                history: "ผู้นำตำบลบางลึกประกอบด้วยนายกเทศมนตรีกำนันผู้ใหญ่บ้านผู้นำชุมชนและชาวบ้านรวม12หมู่บ้านใน ต.บางลึก อ.เมือง จ.ชุมพร เปิดตลาดน้ำบ้านพ่อภายในพื้นที่พัฒนาหนองใหญ่โครงการพระราชดำริในหลวงรัชกาลที่9ที่พระองค์ทรงใช้พื้นที่แห่งนี้ทำเป็นแก้มลิงหนองใหญ่แก้ปัญหาน้ำป่าไหลหลากน้ำท่วมซ้ำซากในเขตเทศบาลเมืองชุมพรและบริเวณพื้นที่ใกล้เคียงปัจจุบันกว่า20ปีแล้วน้ำไม่เคยท่วมในพื้นที่ดังกล่าวอีกเลยส่วนหน้าแล้งยังสามารถกักเก็บน้ำไว้ให้ชาวบ้านเกษตรกรนำไปใช้ในการเกษตรได้อีกด้วย",
+                credibility: "เอกสารราชการบทความวิจัยหนังสือประวัติศาสตร์หรือบทความข่าวที่มีชื่อเสียงแหล่งข้อมูลที่ได้รับการยอมรับในวงกว้างจะช่วยเสริมสร้างความเชื่อถือ",
+                evaluation: "ตลาดน้ำหนองใหญ่สามารถเป็นแหล่งสร้างรายได้ให้กับชาวบ้าน เช่น การขายสินค้าพื้นบ้าน อาหาร และผลิตภัณฑ์ท้องถิ่น",
+                link: "https://wordwall.net/play/81767/272/126"
+            }
+        };
+
+        function showInfo(locationId) {
+            const location = locations[locationId];
+            document.getElementById('location-title').innerText = location.title;
+            document.getElementById('location-history').innerText = location.history;
+            document.getElementById('location-credibility').innerText = location.credibility;
+            document.getElementById('location-evaluation').innerText = location.evaluation;
+            document.getElementById('location-link').href = location.link; // ตั้งค่า URL ของลิงก์
+            document.getElementById('info-box').style.display = 'block';
+        }
+
+        function closeInfo() {
+            document.getElementById('info-box').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
